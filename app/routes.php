@@ -121,3 +121,125 @@ Route::get('/debug', function() {
     echo '</pre>';
 
 });
+
+
+Route::get('/practice-creating', function() {
+
+    # Instantiate a new Book model class
+    $book = new Book();
+
+    # Set 
+    $book->title = 'The Great Gatsby';
+    $book->author = 'F. Scott Fiztgerald';
+    $book->published = 1925;
+    $book->cover = 'http://img2.imagesbn.com/p/9780743273565_p0_v4_s114x166.JPG';
+    $book->purchase_link = 'http://www.barnesandnoble.com/w/the-great-gatsby-francis-scott-fitzgerald/1116668135?ean=9780743273565';
+
+    # This is where the Eloquent ORM magic happens
+    $book->save();
+
+    return 'A new book has been added! Check your database to see...';
+
+});
+
+
+Route::get('/practice-reading', function() {
+
+    # The all() method will fetch all the rows from a Model/table
+    $books = Book::all();
+
+    # Make sure we have results before trying to print them...
+    if($books->isEmpty() != TRUE) {
+
+        # Typically we'd pass $books to a View, but for quick and dirty demonstration, let's just output here...
+        foreach($books as $book) {
+            echo $book->title.'<br>';
+            echo $book->author.'<br>';
+        }
+    }
+    else {
+        return 'No books found';
+    }
+
+});
+
+
+Route::get('/practice-reading-one-book', function() {
+
+    $book = Book::where('author', 'LIKE', '%Scott%')->first();
+
+    if($book) {
+        return $book->title;
+    }
+    else {
+        return 'Book not found.';
+    }
+
+});
+
+
+Route::get('/practice-updating', function() {
+
+    # First get a book to update
+    $book = Book::where('author', 'LIKE', '%Scott%')->first();
+
+    # If we found the book, update it
+    if($book) {
+
+        # Give it a different title
+        $book->title = 'The Really Great Gatsby';
+
+        # Save the changes
+        $book->save();
+
+        return "Update complete; check the database to see if your update worked...";
+    }
+    else {
+        return "Book not found, can't update.";
+    }
+
+});
+
+
+Route::get('/practice-deleting', function() {
+
+    # First get a book to delete
+    $book = Book::where('author', 'LIKE', '%Scott%')->first();
+
+    # If we found the book, delete it
+    if($book) {
+
+        # Goodbye!
+        $book->delete();
+
+        return "Deletion complete; check the database to see if it worked...";
+
+    }
+    else {
+        return "Can't delete - Book not found.";
+    }
+
+});
+
+
+
+Route::get('/example', function() {
+
+    # The all() method will fetch all the rows from a Model/table
+    $books = Book::first();
+    echo $books;
+    /*
+    # Make sure we have results before trying to print them...
+    if($books->isEmpty() != TRUE) {
+
+        # Typically we'd pass $books to a View, but for quick and dirty demonstration, let's just output here...
+        
+        //echo Pre::render($books);
+        echo $books;
+    }
+    else {
+        return 'No books found';
+    }
+    */
+
+});
